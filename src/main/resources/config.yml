@@ -1,0 +1,2 @@
+format: "&6[&bStaffChat&6] &b%player%: &6%message%"
+send-to-console: false
