@@ -1,14 +1,13 @@
 plugins {
     java
-    id("com.github.johnrengelman.shadow").version("7.0.0")
+    id("com.github.johnrengelman.shadow").version("7.1.0")
 }
 
 group = "me.moros"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.1-SNAPSHOT"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    toolchain.languageVersion.set(JavaLanguageVersion.of(16))
     withJavadocJar()
     withSourcesJar()
 }
@@ -20,8 +19,8 @@ repositories {
 }
 
 dependencies {
-    implementation("net.kyori:adventure-platform-bungeecord:4.0.0-SNAPSHOT")
-    compileOnly("org.checkerframework", "checker-qual", "3.15.0")
+    implementation("net.kyori:adventure-platform-bungeecord:4.0.0")
+    compileOnly("org.checkerframework", "checker-qual", "3.18.1")
     compileOnly("io.github.waterfallmc", "waterfall-api", "1.17-R0.1-SNAPSHOT")
 }
 

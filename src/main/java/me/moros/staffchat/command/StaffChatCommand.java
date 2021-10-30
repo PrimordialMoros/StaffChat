@@ -19,6 +19,8 @@
 
 package me.moros.staffchat.command;
 
+import java.util.regex.Matcher;
+
 import me.moros.staffchat.StaffChat;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -49,7 +51,7 @@ public class StaffChatCommand extends Command {
 
   private Component formatMessage(CommandSender sender, String message) {
     String text = plugin.configManager().config().getString("format", "&6[&bStaffChat&6] &b%player%: &6%message%")
-      .replaceFirst("%player%", sender.getName()).replaceFirst("%message%", message);
+      .replaceFirst("%player%", sender.getName()).replaceFirst("%message%", Matcher.quoteReplacement(message));
     return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
   }
 
