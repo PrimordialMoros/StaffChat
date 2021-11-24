@@ -31,6 +31,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO add minimessage parsing?
 public class StaffChat extends Plugin implements Listener {
   private Logger logger;
 

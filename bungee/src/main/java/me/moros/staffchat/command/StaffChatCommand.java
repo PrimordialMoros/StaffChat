@@ -34,7 +34,7 @@ public class StaffChatCommand extends Command {
   private final StaffChat plugin;
 
   public StaffChatCommand(@NonNull StaffChat plugin) {
-    super("staffchat", "staffchat.send", "sc");
+    super("me/moros/staffchat", "staffchat.send", "sc");
     this.plugin = plugin;
   }
 

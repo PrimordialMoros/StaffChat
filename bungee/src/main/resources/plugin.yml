@@ -1,5 +1,5 @@
 name: StaffChat
-description: Staff channel plugin for TLB.
+description: Staff channel plugin
 author: Moros
 version: ${pluginVersion}
 main: me.moros.staffchat.StaffChat
