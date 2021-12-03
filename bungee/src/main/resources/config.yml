@@ -1,2 +1,5 @@
-format: "&6[&bStaffChat&6] &b%player%: &6%message%"
-send-to-console: false
+channels:
+  staffchat:
+    aliases: "sc"
+    format: "&6[&bStaffChat&6] &b%player%: &6%message%"
+    send-to-console: false

@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -66,8 +67,9 @@ public final class ConfigManager {
   }
 
   private void setupDefaults() {
-    configRoot.getNode("format").getString("&6[&bStaffChat&6] &b%player%: &6%message%");
-    configRoot.getNode("send-to-console").getBoolean(false);
+    ConfigurationNode node = configRoot.getNode("channels", "staffchat");
+    node.getNode("format").getString("&6[&bStaffChat&6] &b%player%: &6%message%");
+    node.getNode("send-to-console").getBoolean(false);
     save();
   }
 

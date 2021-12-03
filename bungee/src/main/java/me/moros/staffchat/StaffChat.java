@@ -20,6 +20,7 @@
 package me.moros.staffchat;
 
 import java.io.InputStream;
+import java.util.Collection;
 
 import me.moros.staffchat.command.StaffChatCommand;
 import me.moros.staffchat.command.StaffChatReloadCommand;
@@ -31,7 +32,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO add minimessage parsing?
 public class StaffChat extends Plugin implements Listener {
   private Logger logger;
 
@@ -51,8 +51,12 @@ public class StaffChat extends Plugin implements Listener {
 
     audiences = BungeeAudiences.create(this);
 
-    getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this));
     getProxy().getPluginManager().registerCommand(this, new StaffChatReloadCommand(this));
+    for (String s : configManager.config().getSection("channels").getKeys()) {
+      Collection<String> aliases = configManager.config().getStringList("channels." + s + ".aliases");
+      getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this, s, aliases.toArray(new String[0])));
+    }
+    configManager.save();
   }
 
   @Override

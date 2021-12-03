@@ -19,10 +19,15 @@
 
 package staffchat;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginDescription;
 import com.velocitypowered.api.proxy.ProxyServer;
+import ninja.leaping.configurate.ConfigurationNode;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import staffchat.command.StaffChatCommand;
@@ -30,7 +35,7 @@ import staffchat.command.StaffChatReloadCommand;
 import staffchat.config.ConfigManager;
 
 @Plugin(
-  id = "staffchat", name = "StaffChat", version = "2.0.0-SNAPSHOT",
+  id = "staffchat", name = "StaffChat", version = "2.1.0-SNAPSHOT",
   url = "https://github.com/PrimordialMoros/StaffChat", description = "Staff channel plugin.", authors = {"Moros"}
 )
 public class StaffChat {
@@ -42,8 +47,14 @@ public class StaffChat {
   public StaffChat(@NonNull ProxyServer server, @NonNull Logger logger, @NonNull PluginDescription description) {
     this.server = server;
     this.configManager = new ConfigManager(logger, description.getId());
-    new StaffChatCommand(this);
     new StaffChatReloadCommand(this);
+
+    for (var entry : configManager.config().getNode("channels").getChildrenMap().entrySet()) {
+      String command = (String) entry.getKey();
+      TypeToken.get(String.class);
+      Collection<String> aliases = ((ConfigurationNode) entry.getValue()).getNode("aliases").getList(s -> (String) s, List.of());
+      new StaffChatCommand(this, command, aliases.toArray(new String[0]));
+    }
   }
 
   public @NonNull ProxyServer proxy() {

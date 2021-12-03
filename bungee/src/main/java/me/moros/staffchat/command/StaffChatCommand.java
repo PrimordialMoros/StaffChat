@@ -19,6 +19,7 @@
 
 package me.moros.staffchat.command;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 
 import me.moros.staffchat.StaffChat;
@@ -32,10 +33,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class StaffChatCommand extends Command {
   private final StaffChat plugin;
+  private final String command;
 
-  public StaffChatCommand(@NonNull StaffChat plugin) {
-    super("me/moros/staffchat", "staffchat.send", "sc");
+  public StaffChatCommand(@NonNull StaffChat plugin, @NonNull String command, String... aliases) {
+    super(command.toLowerCase(Locale.ROOT), "staffchat.send." + command.toLowerCase(Locale.ROOT), aliases);
     this.plugin = plugin;
+    this.command = command.toLowerCase(Locale.ROOT);
   }
 
   @Override
@@ -50,16 +53,17 @@ public class StaffChatCommand extends Command {
   }
 
   private Component formatMessage(CommandSender sender, String message) {
-    String text = plugin.configManager().config().getString("format", "&6[&bStaffChat&6] &b%player%: &6%message%")
+    String text = plugin.configManager().config()
+      .getString("channels." + command + ".format", "&6[&bStaffChat&6] &b%player%: &6%message%")
       .replaceFirst("%player%", sender.getName()).replaceFirst("%message%", Matcher.quoteReplacement(message));
     return LegacyComponentSerializer.legacyAmpersand().deserialize(text);
   }
 
   private boolean canView(CommandSender sender) {
-    if (!sender.hasPermission("staffchat.send") && !sender.hasPermission("staffchat.receive")) {
+    if (!sender.hasPermission("staffchat.send." + command) && !sender.hasPermission("staffchat.receive." + command)) {
       return false;
     }
-    if (plugin.configManager().config().getBoolean("send-to-console", false)) {
+    if (plugin.configManager().config().getBoolean("channels." + command + ".send-to-console", true)) {
       return true;
     }
     return sender instanceof ProxiedPlayer;

@@ -19,6 +19,7 @@
 
 package staffchat.command;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -40,14 +41,15 @@ import staffchat.StaffChat;
 
 public final class StaffChatCommand {
   private final StaffChat staffChat;
+  private final String command;
 
-  public StaffChatCommand(@NonNull StaffChat staffChat) {
+  public StaffChatCommand(@NonNull StaffChat staffChat, @NonNull String command, String... aliases) {
     this.staffChat = staffChat;
-
+    this.command = command.toLowerCase(Locale.ROOT);
     LiteralCommandNode<CommandSource> staffChatCommand = LiteralArgumentBuilder
-      .<CommandSource>literal("staffchat")
+      .<CommandSource>literal(this.command)
       .executes(context -> {
-        context.getSource().sendMessage(Component.text("Usage: /staffchat <msg>", NamedTextColor.GOLD));
+        context.getSource().sendMessage(Component.text("Usage: /" + this.command + " <msg>", NamedTextColor.GOLD));
         return 0;
       }).build();
 
@@ -58,18 +60,18 @@ public final class StaffChatCommand {
     staffChatCommand.addChild(messageNode);
     BrigadierCommand cmd = new BrigadierCommand(staffChatCommand);
 
-    CommandMeta meta = staffChat.proxy().getCommandManager().metaBuilder(cmd).aliases("sc").build();
+    CommandMeta meta = staffChat.proxy().getCommandManager().metaBuilder(cmd).aliases(aliases).build();
     staffChat.proxy().getCommandManager().register(meta, cmd);
   }
 
   private int onCommand(CommandSource sender, String message) {
-    if (sender.getPermissionValue("staffchat.send") == Tristate.FALSE) {
+    if (sender.getPermissionValue("staffchat.send." + command) == Tristate.FALSE) {
       sender.sendMessage(Component.text("You do not have permission to perform this command!", NamedTextColor.RED));
       return 0;
     }
     if (sender instanceof Player player) {
       Component componentMessage = formatMessage(player, message);
-      if (staffChat.configManager().config().getNode("send-to-console").getBoolean(false)) {
+      if (staffChat.configManager().config().getNode("channels", command, "send-to-console").getBoolean(false)) {
         staffChat.proxy().getConsoleCommandSource().sendMessage(componentMessage);
       }
       staffChat.proxy().getAllPlayers().stream()
@@ -79,7 +81,7 @@ public final class StaffChatCommand {
   }
 
   private Component formatMessage(Player sender, String message) {
-    String text = staffChat.configManager().config().getNode("format")
+    String text = staffChat.configManager().config().getNode("channels", command, "format")
       .getString("&6[&bStaffChat&6] &b%player%: &6%message%")
       .replaceFirst("%player%", sender.getUsername())
       .replaceFirst("%message%", Matcher.quoteReplacement(message));
@@ -87,7 +89,7 @@ public final class StaffChatCommand {
   }
 
   private boolean canView(CommandSource user) {
-    return user.getPermissionValue("staffchat.send") != Tristate.FALSE ||
-      user.getPermissionValue("staffchat.receive") != Tristate.FALSE;
+    return user.getPermissionValue("staffchat.send." + command) != Tristate.FALSE ||
+      user.getPermissionValue("staffchat.receive." + command) != Tristate.FALSE;
   }
 }
